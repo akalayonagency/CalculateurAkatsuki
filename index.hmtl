@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calculateur TikTok</title>
+
+<style>
+/* 🎨 THEME "AKATSUKI / FEU" (rouge-noir-or) */
+:root{
+  /* Backgrounds */
+  --bg-main-1:#07060a;          /* noir profond */
+  --bg-main-2:#14060a;          /* noir/rouge */
+  --bg-card:rgba(10,6,10,.62);  /* carte sombre */
+  --bg-field:rgba(0,0,0,.45);   /* champs */
+
+  /* Accents */
+  --red:#ff2a2a;
+  --red-2:#ff4a1a;
+  --ember:#ff7a2b;
+
+  /* Gold (déjà dans ton style) */
+  --gold:#d4af37;
+  --gold-soft:rgba(212,175,55,.30);
+
+  /* Text */
+  --white:#ffffff;
+  --muted:rgba(255,255,255,.72);
+
+  /* UI */
+  --radius:16px;
+  --shadow:0 18px 55px rgba(0,0,0,.55);
+
+  /* Borders / glow */
+  --border-soft:rgba(255,74,26,.20);
+  --border-strong:rgba(255,74,26,.35);
+  --glow:0 0 0 1px rgba(255,42,42,.22), 0 0 28px rgba(255,42,42,.20);
+}
+
+html,body{
+  margin:0;
+  background:transparent;
+  font-family:Arial, system-ui, sans-serif;
+  color:var(--white);
+}
+
+/* SECTION INTEGREE */
+.calc{
+  width:100%;
+  padding:20px;
+  background:
+    radial-gradient(1200px 700px at 20% 10%, rgba(255,74,26,.18), transparent 60%),
+    radial-gradient(900px 600px at 85% 20%, rgba(255,42,42,.14), transparent 55%),
+    linear-gradient(135deg, var(--bg-main-2), var(--bg-main-1));
+  box-sizing:border-box;
+}
+
+/* CARTE */
+.card{
+  width:100%;
+  max-width:980px;
+  margin:0 auto;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.35));
+  border:1px solid var(--border-strong);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow), var(--glow);
+  backdrop-filter: blur(8px);
+  overflow:hidden;
+}
+
+/* HEADER */
+header{
+  padding:16px;
+  border-bottom:1px solid rgba(255,74,26,.22);
+  background:
+    radial-gradient(900px 220px at 30% 0%, rgba(255,74,26,.20), transparent 60%),
+    linear-gradient(90deg, rgba(0,0,0,.15), rgba(0,0,0,.05));
+}
+header h1{
+  margin:0;
+  font-size:18px;
+  font-weight:900;
+  color:var(--white);
+  text-shadow:0 2px 12px rgba(255,42,42,.15);
+}
+header p{
+  margin:6px 0 0;
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* CONTENU */
+.content{ padding:16px; }
+
+.grid{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:14px;
+}
+@media(max-width:850px){
+  .grid{grid-template-columns:1fr;}
+}
+
+/* INPUTS */
+.row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+@media(max-width:700px){
+  .row{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:450px){
+  .row{grid-template-columns:1fr;}
+}
+
+.field{
+  background:linear-gradient(180deg, rgba(0,0,0,.52), rgba(0,0,0,.36));
+  border:1px solid rgba(255,74,26,.18);
+  border-radius:14px;
+  padding:10px;
+  box-shadow:0 10px 24px rgba(0,0,0,.25);
+}
+
+.field label{
+  font-size:12px;
+  font-weight:900;
+  color:var(--white);
+  margin-bottom:8px;
+  display:flex;
+  justify-content:space-between;
+}
+
+.field small{
+  color:var(--muted);
+  font-weight:700;
+}
+
+.input{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid rgba(255,74,26,.22);
+  border-radius:12px;
+  padding:8px 10px;
+  background:rgba(0,0,0,.25);
+  transition:.18s ease;
+}
+
+.input:focus-within{
+  border-color:rgba(255,122,43,.55);
+  box-shadow:0 0 0 3px rgba(255,74,26,.14);
+}
+
+.input input{
+  width:100%;
+  background:transparent;
+  border:0;
+  outline:none;
+  color:var(--white);
+  font-size:15px;
+  font-weight:900;
+}
+
+.unit{
+  color:var(--gold);
+  font-weight:900;
+  text-shadow:0 1px 10px rgba(212,175,55,.12);
+}
+
+/* RESULTAT */
+.result{
+  background:
+    radial-gradient(600px 300px at 50% 10%, rgba(255,74,26,.20), transparent 60%),
+    linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.35));
+  border:1px solid rgba(255,74,26,.22);
+  border-radius:14px;
+  padding:14px;
+  box-shadow:0 14px 40px rgba(0,0,0,.35), var(--glow);
+}
+
+.topline{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.badge{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:999px;
+  background:rgba(255,74,26,.18);
+  border:1px solid rgba(255,74,26,.40);
+  font-weight:900;
+  font-size:12px;
+  color:var(--white);
+  box-shadow:0 10px 24px rgba(0,0,0,.25);
+}
+
+.rate{
+  font-size:12px;
+  font-weight:900;
+  color:var(--muted);
+  border:1px solid rgba(212,175,55,.22);
+  background:rgba(212,175,55,.10);
+  padding:6px 10px;
+  border-radius:999px;
+}
+
+.big{
+  font-size:36px;
+  font-weight:900;
+  margin:10px 0 6px;
+  color:var(--white);
+  text-shadow:0 2px 18px rgba(255,42,42,.18);
+}
+
+.muted{
+  font-size:13px;
+  color:var(--muted);
+}
+
+.hr{
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,74,26,.28), transparent);
+  margin:10px 0;
+}
+
+/* BOUTONS */
+.btns{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-top:12px;
+}
+@media(max-width:520px){
+  .btns{grid-template-columns:repeat(2,1fr);}
+}
+
+button{
+  background:rgba(0,0,0,.40);
+  border:1px solid rgba(255,74,26,.18);
+  border-radius:12px;
+  padding:10px;
+  font-weight:900;
+  color:var(--white);
+  cursor:pointer;
+  transition:.18s ease;
+}
+
+button:hover{
+  background:rgba(255,74,26,.14);
+  border-color:rgba(255,74,26,.32);
+  transform:translateY(-1px);
+}
+
+button:active{
+  transform:translateY(0px);
+}
+
+.primary{
+  background:linear-gradient(135deg, #ff7a2b, #ff2a2a);
+  color:#12060a;
+  border:none;
+  box-shadow:0 14px 30px rgba(255,42,42,.18);
+}
+
+.primary:hover{
+  filter:brightness(1.05);
+}
+
+/* ✅ ton override (tu l'avais mis) */
+.calc{
+  padding:0;
+  background:transparent;
+}
+</style>
+
+<body>
+  <section class="calc">
+    <div class="card">
+      <header>
+        <h1>Calculateur de récompense Layon Agency</h1>
+        <p>Entre tes stats : palier détecté + estimation de récompense + ce qu’il manque pour le palier suivant.</p>
+      </header>
+
+      <div class="content">
+        <div class="grid">
+          <!-- ✅ COLONNE GAUCHE -->
+          <div>
+            <div class="row">
+              <div class="field">
+                <label>Jours <small>jours valides</small></label>
+                <div class="input">
+                  <input type="number" id="jours" min="0" step="1" placeholder="0" inputmode="numeric" />
+                  <span class="unit">jours</span>
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Heures <small>temps live</small></label>
+                <div class="input">
+                  <input type="number" id="heures" min="0" step="1" placeholder="0" inputmode="numeric" />
+                  <span class="unit">h</span>
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Diamants <small>dans le mois</small></label>
+                <div class="input">
+                  <input type="number" id="diamants" min="0" step="100" placeholder="0" inputmode="numeric" />
+                  <span class="unit">💎</span>
+                </div>
+              </div>
+            </div>
+
+            <p class="muted" style="margin:10px 2px 0;">
+              Astuce : tu peux utiliser les boutons “Palier” pour tester rapidement.
+            </p>
+          </div>
+
+          <!-- ✅ COLONNE DROITE -->
+          <div class="result">
+            <div class="topline">
+              <div class="badge" id="palier">Aucun palier</div>
+              <div class="rate" id="rate">Taux : 0%</div>
+            </div>
+
+            <div class="big" id="resultat">0</div>
+            <div class="muted" id="details">Entre des valeurs pour voir l’estimation.</div>
+
+            <div class="hr"></div>
+
+            <div class="muted" id="manque"></div>
+
+            <div class="btns">
+              <button class="primary" id="p1">Palier 1</button>
+              <button id="p2">Palier 2</button>
+              <button id="p3">Palier 3</button>
+              <button class="ghost" id="reset">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const nf = new Intl.NumberFormat("fr-FR");
+
+    const tiers = [
+      { name:"Palier 1", j:12, h:25, d:75000,  taux:2   },
+      { name:"Palier 2", j:15, h:40, d:150000, taux:3   },
+      { name:"Palier 3", j:22, h:60, d:500000, taux:3.5 }
+    ];
+
+    const $ = (id) => document.getElementById(id);
+    const jours = $("jours"), heures = $("heures"), diamants = $("diamants");
+    const palierEl = $("palier"), resultatEl = $("resultat"), detailsEl = $("details");
+    const manqueEl = $("manque"), rateEl = $("rate");
+
+    function v(){
+      return {
+        j: Math.max(0, Number(jours.value) || 0),
+        h: Math.max(0, Number(heures.value) || 0),
+        d: Math.max(0, Number(diamants.value) || 0),
+      };
+    }
+
+    function atteint(t, x){ return x.j >= t.j && x.h >= t.h && x.d >= t.d; }
+
+    function detecterPalier(x){
+      for(let i = tiers.length - 1; i >= 0; i--){
+        if (atteint(tiers[i], x)) return tiers[i];
+      }
+      return null;
+    }
+
+    function prochainPalier(x){
+      for(const t of tiers){
+        if(!atteint(t, x)) return t;
+      }
+      return null;
+    }
+
+    function manquePour(t, x){
+      const mj = Math.max(0, t.j - x.j);
+      const mh = Math.max(0, t.h - x.h);
+      const md = Math.max(0, t.d - x.d);
+
+      const parts = [];
+      if(mj) parts.push(`${nf.format(mj)} jour${mj > 1 ? "s" : ""}`);
+      if(mh) parts.push(`${nf.format(mh)} heure${mh > 1 ? "s" : ""}`);
+      if(md) parts.push(`${nf.format(md)} diamants`);
+
+      return parts.length
+        ? `Pour ${t.name} : il manque ${parts.join(" • ")}.`
+        : `Tu as atteint ${t.name} ✅`;
+    }
+
+    function calculer(){
+      const x = v();
+      const t = detecterPalier(x);
+
+      const taux = t ? t.taux : 0;
+      palierEl.textContent = t ? t.name : "Aucun palier";
+      rateEl.textContent = `Taux : ${String(taux).replace(".", ",")}%`;
+
+      const reward = Math.floor(x.d * taux / 100);
+      resultatEl.textContent = nf.format(reward);
+
+      detailsEl.textContent = t
+        ? `Formule : ⌊diamants × taux / 100⌋`
+        : `Entre des valeurs pour voir l’estimation.`;
+
+      const next = prochainPalier(x);
+      manqueEl.textContent = next ? manquePour(next, x) : "Palier max atteint 🎉";
+    }
+
+    [jours, heures, diamants].forEach(inp => inp.addEventListener("input", calculer));
+
+    $("p1").onclick = () => (jours.value=12, heures.value=25, diamants.value=75000,  calculer());
+    $("p2").onclick = () => (jours.value=15, heures.value=40, diamants.value=150000, calculer());
+    $("p3").onclick = () => (jours.value=22, heures.value=60, diamants.value=500000, calculer());
+    $("reset").onclick = () => (jours.value="", heures.value="", diamants.value="", calculer());
+
+    calculer();
+  </script>
+</body>
+</html>
